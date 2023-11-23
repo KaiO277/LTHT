@@ -7,20 +7,32 @@
 #include <pwd.h>
 #include <grp.h>
 
+void print_file_info(const char *filename);
+
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Sử dụng: %s <tên tệp hoặc thư mục>\n", argv[0]);
+    if (argc < 2) {
+        printf("Sử dụng: %s <tên tệp hoặc thư mục> ...\n", argv[0]);
         return 1;
     }
 
+    for (int i = 1; i < argc; i++) {
+        printf("Thông tin cho: %s\n", argv[i]);
+        print_file_info(argv[i]);
+        printf("\n");
+    }
+
+    return 0;
+}
+
+void print_file_info(const char *filename) {
     struct stat fileStat;
 
-    if (stat(argv[1], &fileStat) < 0) {
+    if (stat(filename, &fileStat) < 0) {
         perror("Lỗi");
-        return 1;
+        return;
     }
 
-    printf("Tệp/Thư mục: %s\n", argv[1]);
+    printf("Tệp/Thư mục: %s\n", filename);
     printf("Loại Tệp: ");
     if (S_ISREG(fileStat.st_mode)) {
         printf("Tệp thường\n");
@@ -63,7 +75,4 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     printf("Thời gian truy cập lần cuối: %s", ctime(&fileStat.st_atime));
-    printf("\n");
-
-    return 0;
 }
